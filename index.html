@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AquaVerse Water Park</title>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:wght@400;600;700;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ocean: #0077b6;
+    --sky: #00b4d8;
+    --foam: #90e0ef;
+    --sand: #ffd166;
+    --coral: #ef476f;
+    --mint: #06d6a0;
+    --deep: #023e8a;
+    --white: #f0faff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: #000d1a;
+    color: var(--white);
+    overflow-x: hidden;
+  }
+
+  /* ── WAVES SVG BG ── */
+  .wave-divider {
+    width: 100%;
+    overflow: hidden;
+    line-height: 0;
+  }
+  .wave-divider svg { display: block; }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 999;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 60px;
+    background: rgba(0,13,26,.75);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid rgba(0,180,216,.25);
+  }
+  .logo {
+    font-family: 'Pacifico', cursive;
+    font-size: 1.8rem;
+    background: linear-gradient(90deg, var(--sky), var(--mint));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 1px;
+  }
+  .logo span { color: var(--sand); -webkit-text-fill-color: var(--sand); }
+  nav ul { list-style: none; display: flex; gap: 36px; }
+  nav ul li a {
+    text-decoration: none;
+    color: var(--foam);
+    font-weight: 600;
+    font-size: .95rem;
+    letter-spacing: .5px;
+    position: relative;
+    padding-bottom: 4px;
+    transition: color .3s;
+  }
+  nav ul li a::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 0; height: 2px;
+    background: var(--sky);
+    border-radius: 2px;
+    transition: width .35s;
+  }
+  nav ul li a:hover { color: #fff; }
+  nav ul li a:hover::after { width: 100%; }
+
+  /* ── HERO ── */
+  #home {
+    min-height: 100vh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    overflow: hidden;
+    background: radial-gradient(ellipse at 50% 80%, #004e8c 0%, #000d1a 70%);
+    padding-top: 80px;
+  }
+
+  /* Animated water bubbles */
+  .bubbles {
+    position: absolute; inset: 0; pointer-events: none; overflow: hidden;
+  }
+  .bubble {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(0,180,216,.15);
+    border: 1px solid rgba(0,180,216,.3);
+    animation: rise linear infinite;
+  }
+  @keyframes rise {
+    0% { transform: translateY(110vh) scale(1); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: .6; }
+    100% { transform: translateY(-10vh) scale(1.3); opacity: 0; }
+  }
+
+  /* Hero image collage */
+  .hero-images {
+    position: absolute; inset: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    opacity: .18;
+    filter: saturate(1.5) blur(1px);
+  }
+  .hero-images img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  .hero-images::after {
+    content:'';
+    position:absolute; inset:0;
+    background: radial-gradient(ellipse at center, transparent 30%, #000d1a 80%);
+  }
+
+  .hero-content { position: relative; z-index: 2; }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(0,180,216,.18);
+    border: 1px solid rgba(0,180,216,.5);
+    border-radius: 50px;
+    padding: 6px 22px;
+    font-size: .8rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--sky);
+    margin-bottom: 20px;
+    animation: fadeDown .8s ease both;
+  }
+  .hero-title {
+    font-family: 'Pacifico', cursive;
+    font-size: clamp(3.5rem, 8vw, 7rem);
+    line-height: 1.05;
+    background: linear-gradient(135deg, #fff 20%, var(--sky) 60%, var(--mint));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: fadeDown .9s ease .15s both;
+  }
+  .hero-sub {
+    font-size: clamp(1rem, 2vw, 1.35rem);
+    color: var(--foam);
+    max-width: 560px;
+    margin: 18px auto 36px;
+    font-weight: 300;
+    line-height: 1.7;
+    animation: fadeDown 1s ease .3s both;
+  }
+  .btn {
+    display: inline-block;
+    padding: 14px 38px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 1rem;
+    text-decoration: none;
+    transition: transform .25s, box-shadow .25s;
+    animation: fadeDown 1s ease .45s both;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--sky), var(--ocean));
+    color: #fff;
+    box-shadow: 0 8px 30px rgba(0,180,216,.45);
+  }
+  .btn-primary:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 14px 40px rgba(0,180,216,.6); }
+  .btn-secondary {
+    background: transparent;
+    color: var(--foam);
+    border: 2px solid rgba(144,224,239,.4);
+    margin-left: 16px;
+  }
+  .btn-secondary:hover { border-color: var(--sky); color: #fff; transform: translateY(-3px); }
+
+  /* Scroll indicator */
+  .scroll-hint {
+    position: absolute; bottom: 30px; left: 50%;
+    transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center;
+    gap: 8px; color: rgba(144,224,239,.5); font-size: .75rem;
+    letter-spacing: 1px; text-transform: uppercase;
+    animation: bounce 2s infinite;
+  }
+  .scroll-hint::after {
+    content: '↓'; font-size: 1.4rem; color: var(--sky);
+  }
+  @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(10px)} }
+
+  @keyframes fadeDown { from{opacity:0;transform:translateY(-24px)} to{opacity:1;transform:translateY(0)} }
+
+  /* ── SECTION COMMON ── */
+  section { padding: 100px 60px; }
+  .section-tag {
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--sky);
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-family: 'Nunito', sans-serif;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 900;
+    line-height: 1.15;
+    margin-bottom: 14px;
+  }
+  .section-sub {
+    font-size: 1.05rem;
+    color: rgba(144,224,239,.75);
+    max-width: 520px;
+    line-height: 1.75;
+    font-weight: 300;
+  }
+
+  /* ── ATTRACTIONS ── */
+  #attraction {
+    background: linear-gradient(180deg, #000d1a 0%, #001a33 50%, #000d1a 100%);
+    position: relative;
+  }
+  .attraction-header { text-align: center; margin-bottom: 64px; }
+  .attraction-header .section-sub { margin: 0 auto; }
+
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+    gap: 28px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .card {
+    border-radius: 24px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    transition: transform .35s, box-shadow .35s;
+    aspect-ratio: 3/4;
+  }
+  .card:hover { transform: translateY(-10px) scale(1.02); box-shadow: 0 24px 60px rgba(0,119,182,.45); }
+  .card img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transition: transform .6s;
+  }
+  .card:hover img { transform: scale(1.08); }
+  .card-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(0,13,26,.95) 0%, transparent 55%);
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 28px;
+  }
+  .card-icon { font-size: 2.2rem; margin-bottom: 10px; }
+  .card-title {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.45rem;
+    font-weight: 900;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+  .card-desc { font-size: .87rem; color: var(--foam); line-height: 1.55; }
+  .card-tag {
+    position: absolute; top: 18px; right: 18px;
+    background: var(--coral);
+    color: #fff;
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 5px 14px;
+    border-radius: 50px;
+    text-transform: uppercase;
+  }
+
+  /* ── FIREWORKS ── */
+  #fireworks {
+    background: radial-gradient(ellipse at 50% 0%, #1a0033 0%, #000d1a 70%);
+    position: relative; overflow: hidden;
+  }
+  .fireworks-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .fireworks-text .section-sub { max-width: 440px; }
+
+  .fireworks-visual {
+    position: relative;
+    border-radius: 30px;
+    overflow: hidden;
+    box-shadow: 0 0 80px rgba(239,71,111,.3);
+  }
+  .fireworks-visual img {
+    width: 100%; display: block;
+    border-radius: 30px;
+  }
+
+  /* Firework sparkle CSS animation */
+  .spark-container {
+    position: absolute; inset: 0; pointer-events: none;
+  }
+  .spark {
+    position: absolute;
+    border-radius: 50%;
+    animation: sparkle linear infinite;
+  }
+  @keyframes sparkle {
+    0%{opacity:0;transform:scale(0) translate(0,0)}
+    50%{opacity:1}
+    100%{opacity:0;transform:scale(1) translate(var(--tx),var(--ty))}
+  }
+
+  .show-times {
+    display: flex; flex-direction: column; gap: 16px;
+    margin-top: 36px;
+  }
+  .show-time-item {
+    display: flex; align-items: center; gap: 18px;
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(239,71,111,.2);
+    border-radius: 14px;
+    padding: 16px 22px;
+    transition: background .3s, border-color .3s;
+  }
+  .show-time-item:hover { background: rgba(239,71,111,.08); border-color: var(--coral); }
+  .show-time-icon { font-size: 2rem; }
+  .show-time-label { font-weight: 700; font-size: 1rem; color: #fff; }
+  .show-time-sub { font-size: .83rem; color: rgba(144,224,239,.6); margin-top: 2px; }
+
+  /* ── CONTACT ── */
+  #contact {
+    background: linear-gradient(180deg, #000d1a, #001224);
+  }
+  .contact-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    max-width: 1200px;
+    margin: 0 auto;
+    align-items: start;
+  }
+  .contact-info { display: flex; flex-direction: column; gap: 28px; }
+  .contact-card {
+    display: flex; gap: 18px; align-items: flex-start;
+    background: rgba(0,180,216,.06);
+    border: 1px solid rgba(0,180,216,.15);
+    border-radius: 18px;
+    padding: 22px;
+    transition: border-color .3s, background .3s;
+  }
+  .contact-card:hover { border-color: var(--sky); background: rgba(0,180,216,.12); }
+  .contact-card-icon { font-size: 2rem; }
+  .contact-card-title { font-weight: 700; font-size: 1rem; color: var(--sky); margin-bottom: 4px; }
+  .contact-card-text { font-size: .88rem; color: var(--foam); line-height: 1.6; }
+
+  .contact-form { display: flex; flex-direction: column; gap: 18px; }
+  .form-group { display: flex; flex-direction: column; gap: 8px; }
+  .form-group label { font-size: .82rem; font-weight: 600; color: var(--sky); letter-spacing: .5px; text-transform: uppercase; }
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(0,180,216,.2);
+    border-radius: 12px;
+    padding: 14px 18px;
+    color: #fff;
+    font-family: 'Poppins', sans-serif;
+    font-size: .95rem;
+    outline: none;
+    transition: border-color .3s, background .3s;
+    resize: vertical;
+  }
+  .form-group input:focus,
+  .form-group textarea:focus,
+  .form-group select:focus {
+    border-color: var(--sky);
+    background: rgba(0,180,216,.08);
+  }
+  .form-group textarea { min-height: 120px; }
+  .form-group select option { background: #001a33; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .btn-submit {
+    padding: 16px;
+    border-radius: 14px;
+    border: none;
+    background: linear-gradient(135deg, var(--sky), var(--ocean));
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    transition: transform .25s, box-shadow .25s;
+    box-shadow: 0 6px 24px rgba(0,180,216,.35);
+  }
+  .btn-submit:hover { transform: translateY(-3px); box-shadow: 0 12px 36px rgba(0,180,216,.5); }
+
+  /* ── MAP PLACEHOLDER ── */
+  .map-wrap {
+    border-radius: 22px;
+    overflow: hidden;
+    border: 2px solid rgba(0,180,216,.2);
+    margin-top: 10px;
+    position: relative;
+  }
+  .map-wrap img { width: 100%; display: block; }
+  .map-label {
+    position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
+    background: rgba(0,119,182,.85); color: #fff;
+    padding: 8px 22px; border-radius: 50px;
+    font-weight: 700; font-size: .85rem;
+    backdrop-filter: blur(6px);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: #000710;
+    text-align: center;
+    padding: 50px 40px;
+    border-top: 1px solid rgba(0,180,216,.1);
+  }
+  .footer-logo {
+    font-family: 'Pacifico', cursive;
+    font-size: 2rem;
+    background: linear-gradient(90deg, var(--sky), var(--mint));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 16px;
+  }
+  .footer-links { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; margin-bottom: 24px; }
+  .footer-links a { text-decoration: none; color: var(--foam); font-size: .9rem; opacity: .7; transition: opacity .3s; }
+  .footer-links a:hover { opacity: 1; }
+  footer p { color: rgba(144,224,239,.3); font-size: .82rem; }
+
+  /* ── RESPONSIVE ── */
+  @media(max-width:900px){
+    nav { padding: 16px 24px; }
+    nav ul { gap: 20px; }
+    section { padding: 70px 24px; }
+    .fireworks-inner, .contact-inner { grid-template-columns: 1fr; gap: 40px; }
+    .form-row { grid-template-columns: 1fr; }
+    .hero-images { grid-template-columns: 1fr 1fr; }
+  }
+  @media(max-width:600px){
+    nav ul { display:none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════ NAV ════ -->
+<nav>
+  <div class="logo">Aqua<span>Verse</span> 🌊</div>
+  <ul>
+    <li><a href="#home">Home</a></li>
+    <li><a href="#attraction">Attractions</a></li>
+    <li><a href="#fireworks">Fireworks</a></li>
+    <li><a href="#contact">Contact Us</a></li>
+  </ul>
+</nav>
+
+<!-- ════ HERO ════ -->
+<section id="home">
+  <!-- Background image collage -->
+  <div class="hero-images">
+    <img src="https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=600&q=80" alt="">
+    <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=600&q=80" alt="">
+    <img src="https://images.unsplash.com/photo-1534153436596-26e5e7d4e567?w=600&q=80" alt="">
+    <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=80" alt="">
+    <img src="https://images.unsplash.com/photo-1519046904884-53103b34b206?w=600&q=80" alt="">
+    <img src="https://images.unsplash.com/photo-1473177104440-ffee2f376098?w=600&q=80" alt="">
+  </div>
+
+  <!-- Bubbles -->
+  <div class="bubbles" id="bubbles"></div>
+
+  <div class="hero-content">
+    <div class="hero-badge">🌊 Open Season 2025</div>
+    <h1 class="hero-title">Where Waves<br>Meet Wonder</h1>
+    <p class="hero-sub">Dive into the most thrilling water park experience on the planet. Slides, waves, shows & memories that last forever.</p>
+    <a href="#attraction" class="btn btn-primary">Explore Rides 🚀</a>
+    <a href="#contact" class="btn btn-secondary">Book Tickets</a>
+  </div>
+
+  <div class="scroll-hint">Scroll to explore</div>
+</section>
+
+<!-- Wave Divider -->
+<div class="wave-divider">
+<svg viewBox="0 0 1440 60" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+  <path d="M0,30 C360,60 1080,0 1440,30 L1440,60 L0,60 Z" fill="#001a33"/>
+</svg>
+</div>
+
+<!-- ════ ATTRACTIONS ════ -->
+<section id="attraction">
+  <div class="attraction-header">
+    <div class="section-tag">🏄 Thrills Await</div>
+    <h2 class="section-title">Epic <span style="color:var(--sky)">Attractions</span> &amp; Rides</h2>
+    <p class="section-sub">From heart-pounding slides to lazy rivers — there's something magical for every adventurer in the family.</p>
+  </div>
+
+  <div class="cards-grid">
+
+    <!-- Card 1 -->
+    <div class="card">
+      <img src="https://images.unsplash.com/photo-1530870110042-98b2cb110834?w=600&q=80" alt="Tsunami Tower">
+      <div class="card-tag">🔥 Extreme</div>
+      <div class="card-overlay">
+        <div class="card-icon">🌪️</div>
+        <div class="card-title">Tsunami Tower</div>
+        <div class="card-desc">Plunge 30 meters into a roaring vortex — our signature heart-stopper ride!</div>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="card">
+      <img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=600&q=80" alt="Lazy Lagoon">
+      <div class="card-tag">😌 Relaxing</div>
+      <div class="card-overlay">
+        <div class="card-icon">🛟</div>
+        <div class="card-title">Lazy Lagoon</div>
+        <div class="card-desc">Drift along 600 metres of lush tropical waterways under the open sky.</div>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="card">
+      <img src="https://images.unsplash.com/photo-1439405326854-014607f694d7?w=600&q=80" alt="Wild Wave Bay">
+      <div class="card-tag">🌊 Family</div>
+      <div class="card-overlay">
+        <div class="card-icon">🏄</div>
+        <div class="card-title">Wild Wave Bay</div>
+        <div class="card-desc">A massive wave pool that recreates ocean surfing — no ticket to Bali required.</div>
+      </div>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="card">
+      <img src="https://images.unsplash.com/photo-1468581264429-2548ef9eb732?w=600&q=80" alt="Aqua Kids Zone">
+      <div class="card-tag">🧒 Kids</div>
+      <div class="card-overlay">
+        <div class="card-icon">🐠</div>
+        <div class="card-title">Aqua Kids Zone</div>
+        <div class="card-desc">Splash pads, mini slides, and sea-creature water guns just for the little ones.</div>
+      </div>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="card">
+      <img src="https://images.unsplash.com/photo-1501426026826-31c667bdf23d?w=600&q=80" alt="Coral Cove Pool">
+      <div class="card-tag">✨ Premium</div>
+      <div class="card-overlay">
+        <div class="card-icon">🏝️</div>
+        <div class="card-title">Coral Cove Pool</div>
+        <div class="card-desc">An infinity pool with a swim-up bar & panoramic sunset views. Pure bliss.</div>
+      </div>
+    </div>
+
+    <!-- Card 6 -->
+    <div class="card">
+      <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&q=80" alt="Abyss Slide">
+      <div class="card-tag">⚡ New!</div>
+      <div class="card-overlay">
+        <div class="card-icon">🚀</div>
+        <div class="card-title">Abyss Slide</div>
+        <div class="card-desc">Our brand-new dark tunnel coaster plunges you into total blackness at 90 km/h.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Wave Divider -->
+<div class="wave-divider">
+<svg viewBox="0 0 1440 60" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+  <path d="M0,0 C480,60 960,0 1440,60 L1440,60 L0,60 Z" fill="#1a0033"/>
+</svg>
+</div>
+
+<!-- ════ FIREWORKS ════ -->
+<section id="fireworks">
+  <div class="fireworks-inner">
+    <div class="fireworks-text">
+      <div class="section-tag">🎆 Nightly Spectacle</div>
+      <h2 class="section-title">Lights, Water &amp; <span style="color:var(--coral)">Fireworks!</span></h2>
+      <p class="section-sub">End your day with our legendary synchronized water-and-fireworks show — a dazzling 25-minute display that lights up the night sky over our central lagoon.</p>
+
+      <div class="show-times">
+        <div class="show-time-item">
+          <div class="show-time-icon">🌅</div>
+          <div>
+            <div class="show-time-label">Weekend Gala Show</div>
+            <div class="show-time-sub">Every Friday & Saturday · 9:00 PM · Central Lagoon Stage</div>
+          </div>
+        </div>
+        <div class="show-time-item">
+          <div class="show-time-icon">🎇</div>
+          <div>
+            <div class="show-time-label">Summer Blaze Special</div>
+            <div class="show-time-sub">July 1–August 31 · Nightly · 9:30 PM · Premium Seating Available</div>
+          </div>
+        </div>
+        <div class="show-time-item">
+          <div class="show-time-icon">🎉</div>
+          <div>
+            <div class="show-time-label">New Year's Grand Finale</div>
+            <div class="show-time-sub">December 31 · Midnight Countdown · VIP Viewing Deck</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="fireworks-visual">
+        <img src="https://images.unsplash.com/photo-1467810563316-b5476525c0f9?w=800&q=80" alt="Fireworks Show">
+        <div class="spark-container" id="sparks"></div>
+      </div>
+
+      <!-- Second image -->
+      <div style="margin-top:20px; border-radius:20px; overflow:hidden; border:1px solid rgba(239,71,111,.25);">
+        <img src="https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800&q=80" alt="Night show" style="width:100%; display:block; filter:brightness(.85);">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Wave Divider -->
+<div class="wave-divider">
+<svg viewBox="0 0 1440 60" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+  <path d="M0,40 C400,0 1040,60 1440,20 L1440,60 L0,60 Z" fill="#000d1a"/>
+</svg>
+</div>
+
+<!-- ════ CONTACT ════ -->
+<section id="contact">
+  <div class="contact-inner">
+    <div>
+      <div class="section-tag">📬 Get In Touch</div>
+      <h2 class="section-title">We'd Love to<br><span style="color:var(--sky)">Hear From You!</span></h2>
+      <p class="section-sub" style="margin-bottom:36px;">Questions, group bookings, or party planning — our friendly team is here 7 days a week.</p>
+
+      <div class="contact-info">
+        <div class="contact-card">
+          <div class="contact-card-icon">📍</div>
+          <div>
+            <div class="contact-card-title">Visit Us</div>
+            <div class="contact-card-text">42 AquaVerse Boulevard, Coastal District, CA 90210</div>
+          </div>
+        </div>
+        <div class="contact-card">
+          <div class="contact-card-icon">📞</div>
+          <div>
+            <div class="contact-card-title">Call Us</div>
+            <div class="contact-card-text">+1 (800) AQUA-VERSE<br>Mon–Sun · 8 AM – 10 PM</div>
+          </div>
+        </div>
+        <div class="contact-card">
+          <div class="contact-card-icon">✉️</div>
+          <div>
+            <div class="contact-card-title">Email Us</div>
+            <div class="contact-card-text">hello@aquaverse.fun<br>We reply within 24 hours!</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="map-wrap" style="margin-top:28px;">
+        <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=700&q=80" alt="Map" style="filter:saturate(.6) brightness(.7); height:200px; object-fit:cover;">
+        <div class="map-label">📍 AquaVerse Water Park</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="contact-form">
+        <h3 style="font-family:'Nunito',sans-serif;font-size:1.6rem;font-weight:900;margin-bottom:6px;">Send a Message 💬</h3>
+        <p style="font-size:.88rem;color:rgba(144,224,239,.65);margin-bottom:12px;">Fill out the form and we'll splash back to you soon!</p>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>First Name</label>
+            <input type="text" placeholder="John">
+          </div>
+          <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" placeholder="Doe">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" placeholder="john@example.com">
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" placeholder="+1 (555) 000-0000">
+        </div>
+        <div class="form-group">
+          <label>Subject</label>
+          <select>
+            <option>🎟️ Ticket Booking</option>
+            <option>🎂 Birthday Party Package</option>
+            <option>🏢 Group / Corporate Event</option>
+            <option>🎆 Fireworks Show Seating</option>
+            <option>❓ General Enquiry</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Message</label>
+          <textarea placeholder="Tell us how we can help you have the best splash of your life! 🌊"></textarea>
+        </div>
+        <button class="btn-submit">Send Message 🚀</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════ FOOTER ════ -->
+<footer>
+  <div class="footer-logo">AquaVerse 🌊</div>
+  <div class="footer-links">
+    <a href="#home">Home</a>
+    <a href="#attraction">Attractions</a>
+    <a href="#fireworks">Fireworks</a>
+    <a href="#contact">Contact Us</a>
+    <a href="#">Privacy Policy</a>
+    <a href="#">Terms & Conditions</a>
+  </div>
+  <p>© 2025 AquaVerse Water Park. All rights reserved. Make waves, not worries. 🏄</p>
+</footer>
+
+<script>
+  // ── Bubbles ──
+  const bubblesEl = document.getElementById('bubbles');
+  for(let i=0;i<28;i++){
+    const b = document.createElement('div');
+    b.className = 'bubble';
+    const size = Math.random()*60+12;
+    b.style.cssText = `
+      width:${size}px; height:${size}px;
+      left:${Math.random()*100}%;
+      animation-duration:${Math.random()*14+8}s;
+      animation-delay:${Math.random()*12}s;
+    `;
+    bubblesEl.appendChild(b);
+  }
+
+  // ── Firework sparks ──
+  const sparkEl = document.getElementById('sparks');
+  const colors=['#ef476f','#ffd166','#06d6a0','#00b4d8','#fff','#a370f7'];
+  for(let i=0;i<40;i++){
+    const s=document.createElement('div');
+    s.className='spark';
+    const size=Math.random()*6+2;
+    const angle=Math.random()*360;
+    const dist=40+Math.random()*120;
+    const rad=angle*Math.PI/180;
+    s.style.cssText=`
+      width:${size}px;height:${size}px;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      top:${30+Math.random()*40}%;
+      left:${20+Math.random()*60}%;
+      --tx:${Math.cos(rad)*dist}px;
+      --ty:${Math.sin(rad)*dist}px;
+      animation-duration:${1.5+Math.random()*2.5}s;
+      animation-delay:${Math.random()*3}s;
+    `;
+    sparkEl.appendChild(s);
+  }
+
+  // ── Smooth submit feedback ──
+  document.querySelector('.btn-submit').addEventListener('click',function(){
+    this.textContent='✅ Message Sent!';
+    this.style.background='linear-gradient(135deg,#06d6a0,#0077b6)';
+    setTimeout(()=>{
+      this.textContent='Send Message 🚀';
+      this.style.background='';
+    },3000);
+  });
+</script>
+</body>
+</html>
